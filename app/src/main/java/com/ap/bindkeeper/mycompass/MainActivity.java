@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final float[] mRotationMatrix = new float[9];
     private final float[] mOrientationAngles = new float[3];
     private TextView bearingTxtOut ;
+    private TextView vectorAzimuthOut ;
 
     private TextView xOut ;
     private TextView yOut ;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         bearingTxtOut = (TextView) findViewById(R.id.txtBearingOut);
+        vectorAzimuthOut = (TextView) findViewById(R.id.vectorAzimuth);
         xOut = (TextView) findViewById(R.id.outX);
         yOut = (TextView) findViewById(R.id.outY);
         zOut = (TextView) findViewById(R.id.outZ);
@@ -55,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager.registerListener(this,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL);
+
+        mSensorManager.registerListener(this,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
+                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -74,7 +80,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             System.arraycopy(event.values, 0, mMagnetometerReading,
                     0, mMagnetometerReading.length);
-        } else {
+        } else if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            float[] orientation = new float[3];
+            float[] rMat = new float[16];
+
+            SensorManager.getRotationMatrixFromVector( rMat, event.values );
+
+            int azimuth = (int) ( Math.toDegrees( SensorManager.getOrientation( rMat, orientation )[0] ) + 360 ) % 360;
+            vectorAzimuthOut.setText(String.valueOf(azimuth));
+        }else {
 
             float degree = Math.round(event.values[0]);
             bearingTxtOut.setText(String.valueOf(degree));
@@ -117,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             roll = 360 + ((int)(mOrientationAngles[2] * 180/Math.PI));
         }
+
+
 
         xOut.setText(String.valueOf(azimuth));
         yOut.setText(String.valueOf(pitch));
