@@ -1,16 +1,17 @@
 package com.ap.bindkeeper.mycompass;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-
 
     private SensorManager mSensorManager;
     private final float[] mAccelerometerReading = new float[3];
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView xOut ;
     private TextView yOut ;
     private TextView zOut;
+    private ImageView compassImg;
+    int lastVectorAzimuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         xOut = (TextView) findViewById(R.id.outX);
         yOut = (TextView) findViewById(R.id.outY);
         zOut = (TextView) findViewById(R.id.outZ);
+        compassImg = (ImageView) findViewById(R.id.compassView);
+
+
     }
 
     @Override
@@ -82,16 +88,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     0, mMagnetometerReading.length);
         } else if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             float[] orientation = new float[3];
-            float[] rMat = new float[16];
+            float[] rMat = new float[9];
 
             SensorManager.getRotationMatrixFromVector( rMat, event.values );
 
             int azimuth = (int) ( Math.toDegrees( SensorManager.getOrientation( rMat, orientation )[0] ) + 360 ) % 360;
+
+
+           float dazimuth =(float) Math.toDegrees(Math.atan((double)(rMat[1]-rMat[3])/(rMat[0]+rMat[4]))+ 360) % 360;
             vectorAzimuthOut.setText(String.valueOf(azimuth));
+
+            Matrix matrix = new Matrix();
+/*
+             float angle = lastVectorAzimuth - azimuth;
+            int pivotX = compassImg.getDrawable().getBounds().width()/2;
+            int pivotY = compassImg.getDrawable().getBounds().height()/2;
+            compassImg.setScaleType(ImageView.ScaleType.MATRIX);
+
+
+            matrix.postRotate( angle, pivotX, pivotY);
+            compassImg.setImageMatrix(matrix);
+            */
+            compassImg.setRotation(360-azimuth);
         }else {
 
             float degree = Math.round(event.values[0]);
             bearingTxtOut.setText(String.valueOf(degree));
+
+
+
+
+
+
         }
 
         updateOrientationAngles();
@@ -131,8 +159,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             roll = 360 + ((int)(mOrientationAngles[2] * 180/Math.PI));
         }
-
-
 
         xOut.setText(String.valueOf(azimuth));
         yOut.setText(String.valueOf(pitch));

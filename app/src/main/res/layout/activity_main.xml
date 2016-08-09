@@ -80,4 +80,22 @@
         android:layout_alignTop="@+id/txtZ"
         android:layout_alignStart="@+id/outY"
         android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/vectorAzimuth"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/compassView"
+        android:layout_below="@+id/vectorAzimuth"
+        android:src="@drawable/compass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp" />
 </RelativeLayout>
