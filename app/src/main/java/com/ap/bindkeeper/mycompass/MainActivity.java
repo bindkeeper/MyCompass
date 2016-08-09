@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView yOut ;
     private TextView zOut;
     private ImageView compassImg;
+    private ImageView side;
+    private ImageView front;
     int lastVectorAzimuth;
 
     @Override
@@ -40,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         yOut = (TextView) findViewById(R.id.outY);
         zOut = (TextView) findViewById(R.id.outZ);
         compassImg = (ImageView) findViewById(R.id.compassView);
-
-
+        side = (ImageView) findViewById(R.id.side);
+        front = (ImageView) findViewById(R.id.front);
     }
 
     @Override
@@ -91,35 +93,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float[] rMat = new float[9];
 
             SensorManager.getRotationMatrixFromVector( rMat, event.values );
+            SensorManager.getOrientation( rMat, orientation);
 
-            int azimuth = (int) ( Math.toDegrees( SensorManager.getOrientation( rMat, orientation )[0] ) + 360 ) % 360;
+            int azimuth = (int) ( Math.toDegrees( orientation[0] ) + 360 ) % 360;
+            int incline = (int) ( Math.toDegrees( orientation[1] ) + 360 ) % 360;
+            int roll = (int) ( Math.toDegrees( orientation[2] ) + 360 ) % 360;
 
-
-           float dazimuth =(float) Math.toDegrees(Math.atan((double)(rMat[1]-rMat[3])/(rMat[0]+rMat[4]))+ 360) % 360;
+            // taken from http://stackoverflow.com/questions/15649684/how-should-i-calculate-azimuth-pitch-orientation-when-my-android-device-isnt
+            //float dazimuth =(float) Math.toDegrees(Math.atan((double)(rMat[1]-rMat[3])/(rMat[0]+rMat[4]))+ 360) % 360;
             vectorAzimuthOut.setText(String.valueOf(azimuth));
 
-            Matrix matrix = new Matrix();
-/*
-             float angle = lastVectorAzimuth - azimuth;
-            int pivotX = compassImg.getDrawable().getBounds().width()/2;
-            int pivotY = compassImg.getDrawable().getBounds().height()/2;
-            compassImg.setScaleType(ImageView.ScaleType.MATRIX);
-
-
-            matrix.postRotate( angle, pivotX, pivotY);
-            compassImg.setImageMatrix(matrix);
-            */
             compassImg.setRotation(360-azimuth);
+            side.setRotation(incline);
+            front.setRotation(roll);
         }else {
-
             float degree = Math.round(event.values[0]);
             bearingTxtOut.setText(String.valueOf(degree));
-
-
-
-
-
-
         }
 
         updateOrientationAngles();

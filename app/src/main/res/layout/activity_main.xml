@@ -90,12 +90,50 @@
         android:layout_centerHorizontal="true"
         android:textSize="30dp" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/compassView"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+
         android:layout_below="@+id/vectorAzimuth"
-        android:src="@drawable/compass"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp" />
+        android:id="@+id/linearLayout">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/side"
+            android:src="@drawable/autoside"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/compassView"
+            android:layout_alignTop="@+id/compassView"
+            android:layout_weight="1"
+            android:layout_margin="20dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/compassView"
+            android:layout_below="@+id/vectorAzimuth"
+            android:src="@drawable/compass"
+            android:layout_alignEnd="@+id/outZ"
+            android:layout_weight="1"
+            android:layout_margin="0dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/autofront"
+            android:id="@+id/front" />
+    </LinearLayout>
+
 </RelativeLayout>
